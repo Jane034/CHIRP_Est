@@ -7,6 +7,8 @@ import PySimpleGUI as gui
 import sys, os
 from scipy.io.wavfile import write
 import time
+import pyautogui
+#import keyboard
 
 
 with open('WordList.csv') as csvfile:
@@ -40,7 +42,9 @@ gui.theme('LightGrey1') #color of the GUI for both parts
 layout = [ [gui.Text('Patsiendi ID: '), gui.InputText()],
            [gui.Button('Edasi'), gui.Button('Tühista')] ]
 window = gui.Window('Suss', layout)
-while True:
+
+run = True
+while run:
     event, values = window.read()
     if event == 'Edasi':
         #Create subfolders with the patient ID to save respective recordings
@@ -54,6 +58,7 @@ while True:
         break
     
     if event == gui.WIN_CLOSED or event == 'Tühista':
+        run = False
         break
 window.close()
 
@@ -64,19 +69,18 @@ for i in range(0,len(GroupOrder)):
     ChosenWord = random.choice(ChosenGroup)
     AudioGroup = WavFileNames[GroupOrder[i]]
     AudioName = AudioGroup[ChosenGroup.index(ChosenWord)] + '.wav'
+    width, height = pyautogui.size() # Get the size of your screen
     
-    layout = [ [gui.Text(ChosenWord, justification='center', size=(10,1), font=('MerriWeather', 25))],
-    #           [gui.Text('teine'), gui.InputText()],
-               [gui.Button('Esita heli'), gui.Button('Lindista')],
-               [gui.Button('Edasi'), gui.Button('Tühista')] ]
-    window = gui.Window('Suss', layout)
-    while True:
-
+    layout = [ [gui.VPush()],
+               [gui.Push(), gui.Text(ChosenWord, justification='center', size=(10,1), font=('MerriWeather', 50)), gui.Push()],
+               [gui.VPush()],
+               [gui.Push(), gui.Button('Esita heli'), gui.Button('Salvesta')],
+               [gui.Push(), gui.Button('Edasi'), gui.Button('Tühista')] ]
+    window = gui.Window('CHIMT Est', layout, resizable = True, size =(width,height-100))
+    
+    while run:
         event, values = window.read()
-        if event == gui.WIN_CLOSED or event == 'Tühista':
-            # This could also save the progress (recordings and report) just in case
-            False
-                   
+                               
         #This part is finding and playing the respective .wav file after pressing the button
         if event == 'Esita heli':
                                
@@ -92,10 +96,7 @@ for i in range(0,len(GroupOrder)):
             status = sd.wait()
         
         #This part is going to record the audio and save the recording
-        if event == 'Lindista':
-            
-            # Get the path for the Recordings folder
-            #pathRecording = p.replace('Suss.py', 'Recordings')
+        if event == 'Salvesta':
             
             #Record the sound
             duration = 5
@@ -110,5 +111,10 @@ for i in range(0,len(GroupOrder)):
         if event == 'Edasi':
             # This ends the current window and lets the program display the next word in a new window
             break
+        if event == gui.WIN_CLOSED or event == 'Tühista':
+            # This closes the window
+            run = False
+            break
+        
     window.close()
             
