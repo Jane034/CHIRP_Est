@@ -1,2 +1,2 @@
-# Suss
-This is a program to help speech therapists to do their work.
+# CHIRP_Est
+CHIRP program written in Python, directed for use in the Estonian language
