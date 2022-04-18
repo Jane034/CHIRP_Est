@@ -1,13 +1,16 @@
 import sounddevice as sd
 import soundfile as sf
-import numpy as np
+#import numpy as np
 import PySimpleGUI as gui
 import sys, os
 from scipy.io.wavfile import write
-import time#, queue, multiprocessing
+#import time#, queue, multiprocessing
 import pyautogui
 #from pydub import AudioSegment
 
+import time
+import numpy as np
+import scipy.signal as signal
 #q = queue.Queue()
 
 p = os.path.abspath('test.py')
@@ -29,27 +32,16 @@ layout = [ [gui.VPush()],
 window = gui.Window('CHIMT Est', layout, resizable = True, size =(width,height-100))
 
 ###
-def record (self):
+fulldata = np.array([])
 
-    with sf.SoundFile(RecordingPath, mode = 'x', samplerate = fs, channels = 2) as RecordingFile:
-        with sd.InputStream(samplerate = fs, channels = 2, callback = callback) as mikker:
-            while True:
-                RecordingFile = mikker.read(48000)
-#                 except:
-#                     False
-#                     
-#     except:
-#         False
-                
-def callback(self, indata, fs, time, status):
-    self.mic_queue.put(indata.copy())
-#     except:
-#         False
-    
+def callback(in_data, fs, time, flag):
+    print('kutsunf')
+    sd.InputStream.stop(mic_queue)
+    #array = in_data.read(fs)
+    sd.InputStream.start(mic_queue)
+    fulldata = np.append(fulldata, in_data)
+    return fulldata
 
-def stop_recording(self):
-    SoundFile.flush()
-    SoundFile.close()
 ###
 
 while run:
@@ -66,10 +58,18 @@ while run:
         fs = 48000
         AudioName = 'a.wav'
         RecordingPath = os.path.join(RecordingPath, AudioName)
-        record(RecordingPath)
+        RecordingFile = sf.SoundFile(RecordingPath, mode = 'x', samplerate = fs, channels = 2)
+        mic_queue = sd.InputStream(samplerate = fs, channels = 2, callback = callback)
+        sd.InputStream.start(mic_queue)
+        while True:
+            time.sleep(5)
+        print('Alustas salvestamist')
+        
         break
     if event == 'Stopp' and rec == 'on':
-        stop_recording(RecordingPath)
+        stop_recording(mic_queue)
+        recording = sd.mic_queue.read(fs)
+        write(RecordingPath, fs, recording.astype(np.float32))
         break
         
 # #         try:

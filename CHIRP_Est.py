@@ -33,7 +33,7 @@ with open('WordList.csv') as csvfile:
             WavFileNames[GroupNum-1] += [row ['WavFileNameSansExtension'].strip('\xa0')]
 
 # Retrieve the path and generate a list of numbers of groups in random order for later in the GUI
-p = os.path.abspath('Suss.py')
+p = os.path.abspath('CHIRP_Est.py')
 GroupOrder = list(range(0,GroupNum))
 random.shuffle(GroupOrder)
 
@@ -41,7 +41,7 @@ random.shuffle(GroupOrder)
 gui.theme('LightGrey1') #color of the GUI for both parts
 layout = [ [gui.Text('Patsiendi ID: '), gui.InputText()],
            [gui.Button('Edasi'), gui.Button('Tühista')] ]
-window = gui.Window('Suss', layout)
+window = gui.Window('CHIRP_Est', layout)
 
 run = True
 while run:
@@ -85,7 +85,7 @@ for i in range(0,len(GroupOrder)):
         if event == 'Esita heli':
                                
             # Get the path of AudioFiles
-            pathAudio = p.replace('Suss.py', 'AudioFiles')
+            pathAudio = p.replace('CHIRP_Est.py', 'AudioFiles')
             
             # Generate the path of the needed audiofile
             file = os.path.join(pathAudio, AudioName)
